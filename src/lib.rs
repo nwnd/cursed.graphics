@@ -19,7 +19,17 @@ async fn fetch(request: Request, env: Env, _context: Context) -> Result<Response
                 // List the images in the bucket
                 let images = env.bucket("IMAGES")?.list().execute().await?.objects();
 
-                // Pick a random file name
+                // If there's a referer header, make note of the previous image
+                let previous_image = request.headers().get("Referer")?.map(|referer| {
+                    let referer = referer.split("/").last().unwrap();
+                    referer.to_string()
+                });
+
+                // Pick a random file name. Don't pick the same one as the previous image
+                let images = images.iter().filter(|image| {
+                    let image_id = image.key().split(".").next().unwrap().to_string();
+                    previous_image != Some(image_id)
+                }).collect::<Vec<_>>();
                 let random_index = rand::random::<usize>() % images.len();
                 let random_image = images.get(random_index).unwrap().key();
                 let random_image = random_image.split(".").next().unwrap();
