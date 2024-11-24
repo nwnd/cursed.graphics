@@ -12,7 +12,10 @@ async fn fetch(request: Request, env: Env, _context: Context) -> Result<Response
     match path_segments {
         Some(path_segments) => match path_segments.collect::<Vec<&str>>().as_slice() {
             // Index
-            [""] => {
+            [""] => Response::from_html(include_str!("../templates/index.html")),
+
+            // Randomizer
+            ["random"] => {
                 // List the images in the bucket
                 let images = env.bucket("IMAGES")?.list().execute().await?.objects();
 
