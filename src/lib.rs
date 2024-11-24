@@ -40,17 +40,11 @@ async fn fetch(request: Request, env: Env, context: Context) -> Result<Response>
                     return Response::error("Not Found", 404);
                 }
 
-                // Load the image from blob storage
-                let image = env.bucket("IMAGES")?.get(image_path.unwrap()).execute().await?.unwrap().body().unwrap().bytes().await?;
-
-                // Convert the image to a data URI
-                let image_data_uri = format!("data:image/png;base64,{}", base64::encode(image));
-
                 // Serve the image
                 Response::from_html(format!(
                     include_str!("../templates/image.html"),
                     image_id = id,
-                    image_data_uri = image_data_uri
+                    image_filename = image_path.unwrap()
                 ))
             }
 
