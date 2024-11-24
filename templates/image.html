@@ -16,28 +16,27 @@
 
             min-height: 100vh;
             width: 100vw;
+
+            font-family: sans-serif;
             
             display: flex;
             justify-content: center;
             align-items: center;
         }}
 
-        main {{
-            text-align: center;
-            max-width: 800px;
-            width: 100%;
-        }}
-
         main>img {{
-            width: 100%;
-            border: 3px solid black;
+            display: block;
+            margin: auto;
+            max-width: calc(min(800px, 90vw));
+            max-height: calc(min(800px, 85vh));
+            border: 5px solid black;
         }}
     </style>
 </head>
 <body>
-    <main>
+    <main style="margin: 1em; text-align: center;">
         <img src="https://raw.cursed.graphics/{image_filename}">
-        <a href="/random">Random</a>
+        <a href="/random" style="display: block; margin-top: 1em; text-decoration: none;">More</a>
     </main>
     <script data-goatcounter="https://cursed-graphics.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
