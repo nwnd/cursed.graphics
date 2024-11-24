@@ -1,7 +1,7 @@
 use worker::*;
 
 #[event(fetch)]
-async fn fetch(request: Request, env: Env, context: Context) -> Result<Response> {
+async fn fetch(request: Request, env: Env, _context: Context) -> Result<Response> {
     console_error_panic_hook::set_once();
 
     // Split the path into segments
@@ -13,30 +13,32 @@ async fn fetch(request: Request, env: Env, context: Context) -> Result<Response>
         Some(path_segments) => match path_segments.collect::<Vec<&str>>().as_slice() {
             // Index
             [""] => {
-                // Redirect the user to a random page from 1 to `__max__`
-                let maximum_id = env
-                    .kv("NAME_MAP")?
-                    .get("__max__")
-                    .text()
-                    .await?
-                    .unwrap()
-                    .parse::<u32>()
-                    .unwrap();
-                let random_id = rand::random::<u32>() % maximum_id + 1;
+                // List the images in the bucket
+                let images = env.bucket("IMAGES")?.list().execute().await?.objects();
+
+                // Pick a random file name
+                let random_index = rand::random::<usize>() % images.len();
+                let random_image = images.get(random_index).unwrap().key();
+                let random_image = random_image.split(".").next().unwrap();
 
                 Response::builder()
                     .with_status(302)
-                    .with_header("Location", &format!("/{}", random_id))?
+                    .with_header("Location", &format!("/{}", random_image))?
                     .ok("")
             }
 
             // Image subpage (addressed by numeric ID)
             [id] => {
-                // Look up the corresponding image path
-                let image_path = env.kv("NAME_MAP")?.get(id).text().await?;
+                // List the images in the bucket
+                let images = env.bucket("IMAGES")?.list().execute().await?.objects();
+
+                // Find the first one with a matching name
+                let image = images.iter().find(|image| {
+                    image.key().split(".").next().unwrap() == *id
+                });
 
                 // If no result is found, this image doesn't exist
-                if image_path.is_none() {
+                if image.is_none() {
                     return Response::error("Not Found", 404);
                 }
 
@@ -44,7 +46,7 @@ async fn fetch(request: Request, env: Env, context: Context) -> Result<Response>
                 Response::from_html(format!(
                     include_str!("../templates/image.html"),
                     image_id = id,
-                    image_filename = image_path.unwrap()
+                    image_filename = image.unwrap().key()
                 ))
             }
 
