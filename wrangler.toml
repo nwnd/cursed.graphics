@@ -8,4 +8,5 @@ bucket_name = "cursed-graphics"
 preview_bucket_name = "cursed-graphics"
 
 [build]
-command = "cargo install worker-build && worker-build --release"
+# cargo install worker-build
+command = "worker-build --release"
