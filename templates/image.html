@@ -33,19 +33,27 @@
             align-items: center;
         }}
 
-        main>img {{
+        main>a>img {{
             display: block;
             margin: auto;
             max-width: calc(min(800px, 90vw));
-            max-height: calc(min(800px, 85vh));
+            min-width: calc(min(400px, 80vw));
+            /**max-height: calc(min(800px, 85vh));**/
+            width: 100%;
             border: 5px solid black;
+            background-color: black;
         }}
     </style>
 </head>
 <body>
-    <main style="margin: 1em; text-align: center;">
-        <img src="https://raw.cursed.graphics/{image_filename}" alt="{image_id}">
-        <a href="/random" style="display: block; margin-top: 1em; text-decoration: none;">More</a>
+    <main style="margin: 1em; text-align: center; width: max-content;">
+        <a href="/random">
+            <img src="https://raw.cursed.graphics/{image_filename}" alt="{image_id}">
+        </a>
+        <div style="display: flex; justify-content: space-between; margin-top: 0.5em; color: gray;">
+            <span>Cursed Graphics.</span>
+            <span>&COPY; Nerds With No Direction</span>
+        </div>
     </main>
 
     <script data-goatcounter="https://cursed-graphics.goatcounter.com/count"
