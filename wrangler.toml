@@ -1,6 +1,7 @@
 name="cursed-graphics"
 main = "build/worker/shim.mjs"
 compatibility_date = "2024-11-23"
+account_id = "ddc0f8101374c7bf29ab528eefc435ec"
 
 [[r2_buckets]]
 binding = "IMAGES"
